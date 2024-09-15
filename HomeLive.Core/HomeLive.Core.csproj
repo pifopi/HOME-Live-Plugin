@@ -44,7 +44,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="PKHeX.Core" Version="24.7.27" />
+		<ProjectReference Include="..\..\PKHeX\PKHeX.Core\PKHeX.Core.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

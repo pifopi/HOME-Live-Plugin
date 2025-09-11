@@ -145,6 +145,31 @@ public class HomeWrapper
         _ => EntityConverter.ConvertToType(PKM!, typeof(PK9), out _) as PK9,
     };
 
+    //Assumes PKM is a HOME format, and destType is a pre-Switch era format
+    public PKM? BackwardTransfer(Type destType, out EntityConverterResult result)
+    {
+        PKM? pk = null;
+
+        // Bank Transfered Pokémons defaults to GameDataPK8, so we convert to PK8 first if possible
+        if (HasPK8())
+            pk = ConvertToPK8();
+        else if (HasPB7())
+            pk = ConvertToPB7();
+        else if (HasPB8())
+            pk = ConvertToPB8();
+        else if (HasPA8())
+            pk = ConvertToPA8();
+        else if (HasPK9())
+            pk = ConvertToPK9();
+
+        if (pk is not null)
+            pk = EntityConverter.ConvertToType(pk, destType, out result);
+        else
+            result = EntityConverterResult.NoTransferRoute;
+
+        return pk;
+    }
+
     private bool GetIsValid() => GetIsValid(PKM);
 
     private static bool GetIsValid(PKM? pkm)

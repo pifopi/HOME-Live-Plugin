@@ -85,6 +85,8 @@ public static class VersionHandler
             return pkm.ConvertToPA8();
         else if (destType == typeof(PK9) && (pkm.HasPK9() && CanConvertToType(pkm, destType) || forceConversion))
             return pkm.ConvertToPK9();
+        else if (PKH.GetType(destType) is HomeGameDataFormat.None)
+            return pkm.BackwardTransfer(destType, out _);
 
         return null;
     }

@@ -77,9 +77,9 @@ public class HomePlugin : IPlugin
         Language = GameInfo.CurrentLanguage;
         TranslatePlugins();
         if (SaveFileEditor.SAV is SAV7b or SAV8SWSH or SAV8BS or SAV8LA or SAV9SV)
-            Plugin.Enabled = true;
+            Viewer.Enabled = true;
         else
-            Plugin.Enabled = false;
+            Viewer.Enabled = false;
     }
 
     public void NotifyDisplayLanguageChanged(string language)

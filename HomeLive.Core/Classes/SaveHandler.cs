@@ -18,9 +18,8 @@ public static class SaveFileHandler
 
     public static void SetPokeList(this SaveFile sav, List<HomeWrapper?> pks, ConversionType conversionType, bool fixLegality)
     {
-        var version = sav.GetGameVersion();
-        var numBox = version.GetBoxCount();
-        var numSlot = version.GetSlotCount();
+        var numBox = sav.BoxCount;
+        var numSlot = sav.BoxSlotCount;
 
         var convertedList = pks.ConvertListToType(sav.PKMType, conversionType);
         if (convertedList.Count > 0) sav.ClearBoxes();

@@ -3,6 +3,9 @@ using HomeLive.Core;
 using HomeLive.DeviceExecutor;
 using SysBot.Base;
 
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
 namespace HomeLive.Plugins;
 
 public partial class DumperForm : Form
@@ -407,6 +410,55 @@ public partial class DumperForm : Form
         return false;
     }
 
+    // this is a hack to output a json containing the informations about some boxes
+    // The goal is to compare the information here to what was outputed by PokemonAutomation's
+    // home box sorter and see if there is any errors
+    private class PokemonData
+    {
+        [JsonPropertyName("ball_slug")]
+        public string? BallSlug { get; set; }
+
+        [JsonPropertyName("box")]
+        public int Box { get; set; }
+
+        [JsonPropertyName("column")]
+        public int Column { get; set; }
+
+        [JsonPropertyName("gender")]
+        public string? Gender { get; set; }
+
+        [JsonPropertyName("gmax")]
+        public bool Gmax { get; set; }
+
+        [JsonPropertyName("index")]
+        public int Index { get; set; }
+
+        [JsonPropertyName("national_dex_number")]
+        public ushort NationalDexNumber { get; set; }
+
+        [JsonPropertyName("ot_id")]
+        public uint OtId { get; set; }
+
+        [JsonPropertyName("row")]
+        public int Row { get; set; }
+
+        [JsonPropertyName("shiny")]
+        public bool Shiny { get; set; }
+    }
+
+    static private (int, int, int) GetBoxRowColumn(int index)
+    {
+        int column = index % 6;
+        index = index / 6;
+
+        int row = index % 5;
+        index = index / 5;
+
+        int box = index;
+
+        return (box, row, column);
+    }
+
     private async Task ConnectDumper()
     {
         var targets = GetDumpTarget();
@@ -464,6 +516,50 @@ public partial class DumperForm : Form
                     UpdateProgressBar(progress);
                 }
             }
+
+            // this is a hack to output a json containing the informations about some boxes
+            // The goal is to compare the information here to what was outputed by PokemonAutomation's
+            // home box sorter and see if there is any errors
+            List<HomeWrapper?> homeWrappers = new List<HomeWrapper?>();
+            for (var box = 30; box < 59; box++)
+            {
+                var data = await Executor.ReadBoxData(box, token).ConfigureAwait(false);
+                homeWrappers.AddRange(PokeHandler.GenerateEntitiesFromBoxBin(data));
+            }
+
+            List<PokemonData> pokemonList = new List<PokemonData>();
+            for (int index = 0; index < homeWrappers.Count; index++)
+            {
+                var homeWrapper = homeWrappers[index];
+                if (homeWrapper is null)
+                {
+                    continue;
+                }
+                PK8? pkmData = homeWrapper.ConvertToPK8();
+                if (pkmData is null)
+                {
+                    continue;
+                }
+                var result = GetBoxRowColumn(index);
+                PokemonData pokemon = new PokemonData
+                {
+                    BallSlug = "poke-ball",
+                    Box = result.Item1,
+                    Column = result.Item3,
+                    Gender = Enum.GetName(typeof(Gender), pkmData.Gender),
+                    Gmax = pkmData.CanGigantamax,
+                    Index = index,
+                    NationalDexNumber = pkmData.Species,
+                    OtId = pkmData.DisplayTID,
+                    Row = result.Item2,
+                    Shiny = pkmData.IsShiny
+                };
+                pokemonList.Add(pokemon);
+            }
+            var options = new JsonSerializerOptions { WriteIndented = true };
+            string jsonOutput = JsonSerializer.Serialize(pokemonList, options);
+            string jsonOutputWithFourSpaces = jsonOutput.Replace("  ", "    ");
+            File.WriteAllText("jsonOutput.json", jsonOutputWithFourSpaces);
 
             Executor.Disconnect();
             UpdateProgressBar(100);

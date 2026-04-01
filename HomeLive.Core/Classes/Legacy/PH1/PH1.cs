@@ -21,6 +21,8 @@ public sealed class PH1 : PKM, IHandlerLanguage, IFormArgument, IHomeTrack, IBat
 
     private const int HeaderSize = 0x14;
     public override EntityContext Context => EntityContext.None;
+    protected override void EncryptStored(Span<byte> stored) { }
+    protected override void EncryptParty(Span<byte> party) { }
 
     public PH1(Memory<byte> data) : base(DecryptHome(data))
     {
@@ -250,7 +252,7 @@ public sealed class PH1 : PKM, IHandlerLanguage, IFormArgument, IHomeTrack, IBat
     public override void RefreshChecksum() => Checksum = 0;
     public override bool ChecksumValid => true;
 
-    protected override byte[] Encrypt()
+    public byte[] Encrypt()
     {
         var result = Rebuild();
         return HomeCrypto.Encrypt(result);

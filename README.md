@@ -5,8 +5,8 @@ This program is meant to dump and view information from Pokémon deposited in th
 Powered by [PKHeX.Core](https://github.com/kwsch/PKHeX) and [SysBot.Base](https://github.com/kwsch/SysBot.NET).  
 
 ## Features:  
-* Handle (dump, load, view) PKH/EKH/PH1/EH1/PH2/EH2/PH3/EH3 (Pokémon HOME format) files.  
-* Generate PB7/PK8/PB8/PA8/PK9 (Pokémon game-specific format) files from Pokémon HOME data/files.  
+* Handle (dump, load, view) PKH/EKH/PH1/EH1/PH2/EH2/PH3/EH3/PH4/EH4 (Pokémon HOME format) files.  
+* Generate PB7/PK8/PB8/PA8/PK9/PA9 (Pokémon game-specific format) files from Pokémon HOME data/files.  
 
 ## Use Case Examples:  
 * Dump and preserve all your Pokémon HOME PKM files, or load them into PKHeX.  
@@ -86,7 +86,7 @@ Enter your IP address into the plugin, select the boxes/slots you want to displa
 
 ![gplv3-with-text-136x68](https://user-images.githubusercontent.com/52102823/199572700-4e02ed70-74ef-4d67-991e-3168d93aac0d.png)
 
-Copyright © 2025 Manu098vm
+Copyright © 2026 Manu098vm
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

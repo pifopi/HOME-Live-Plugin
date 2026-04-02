@@ -7,7 +7,7 @@ namespace HomeLive.Core;
 
 public static class PokeHandler
 {
-    public static readonly string[] CompatibleFormats = [".ph3", ".eh3", ".ph2", ".eh2", ".ph1", ".eh1", ".pkh", ".ekh"];
+    public static readonly string[] CompatibleFormats = [".ph4", ".eh4", ".ph3", ".eh3", ".ph2", ".eh2", ".ph1", ".eh1", ".pkh", ".ekh"];
 
     public static bool IsCompatibleExtension(string ext)
     {
@@ -83,14 +83,10 @@ public static class PokeHandler
         if (pkh.HasPK8() && pkh.ConvertToPK8() is IGigantamax g && g.CanGigantamax)
             name += " (GMax)";
 
-        if (pkh.HasPA8())
-        {
-            var pa8 = pkh.ConvertToPA8();
-            if (pa8 is IAlpha a && a.IsAlpha)
-                name += " (Alpha)";
-            if (pa8 is INoble n && n.IsNoble)
-                name += " (Noble)";
-        }
+        if (pkh is IAlpha a && a.IsAlpha)
+            name += " (Alpha)";
+        if (pkh is INoble n && n.IsNoble)
+            name += " (Noble)";
 
         name += $" - {pkm.GetFilteredString()}";
         name += $" {pkh.Tracker:X16}";

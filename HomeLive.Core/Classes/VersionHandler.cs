@@ -14,6 +14,8 @@ public static class VersionHandler
     private const int LASlots = 30;
     private const int SVBoxes = 32;
     private const int SVSlots = 30;
+    private const int ZABoxes = 32;
+    private const int ZASlots = 30;
 
     public static GameVersion GetGameVersion(this SaveFile sav) => GetGameVersion(sav.Version);
     public static GameVersion GetGameVersion(int version) => GetGameVersion((GameVersion)version);
@@ -25,6 +27,7 @@ public static class VersionHandler
         if (type == typeof(PB8)) return GameVersion.BDSP;
         if (type == typeof(PA8)) return GameVersion.PLA;
         if (type == typeof(PK9)) return GameVersion.SV;
+        if (type == typeof(PA9)) return GameVersion.ZA;
         else throw new ArgumentException($"{nameof(type)} is not a valid version for this operation.");
     }
 
@@ -35,6 +38,7 @@ public static class VersionHandler
         GameVersion.BDSP or GameVersion.BD or GameVersion.SP => GameVersion.BDSP,
         GameVersion.PLA => GameVersion.PLA,
         GameVersion.SV or GameVersion.SL or GameVersion.VL => GameVersion.SV,
+        GameVersion.ZA => GameVersion.ZA,
         _ => throw new ArgumentException($"{nameof(version)} is not a valid version for this operation.")
     };
 
@@ -45,6 +49,7 @@ public static class VersionHandler
         GameVersion.BDSP => BDSPBoxes,
         GameVersion.PLA => LABoxes,
         GameVersion.SV => SVBoxes,
+        GameVersion.ZA => ZABoxes,
         _ => throw new ArgumentException($"{nameof(version)} is not a valid version for this operation.")
     };
 
@@ -55,6 +60,7 @@ public static class VersionHandler
         GameVersion.BDSP => BDSPSlots,
         GameVersion.PLA => LASlots,
         GameVersion.SV => SVSlots,
+        GameVersion.ZA => ZASlots,
         _ => throw new ArgumentException($"{nameof(version)} is not a valid version for this operation.")
     };
 
@@ -85,6 +91,8 @@ public static class VersionHandler
             return pkm.ConvertToPA8();
         else if (destType == typeof(PK9) && (pkm.HasPK9() && CanConvertToType(pkm, destType) || forceConversion))
             return pkm.ConvertToPK9();
+        else if (destType == typeof(PA9) && (pkm.HasPA9() && CanConvertToType(pkm, destType) || forceConversion))
+            return pkm.ConvertToPA9();
         else if (PKH.GetType(destType) is HomeGameDataFormat.None)
             return pkm.BackwardTransfer(destType, out _);
 
@@ -104,6 +112,7 @@ public static class VersionHandler
         GameVersion.BDSP => pkm.CheckBDSPAvailability(),
         GameVersion.PLA => pkm.CheckPLAAvailability(),
         GameVersion.SV => pkm.CheckSVAvailability(),
+        GameVersion.ZA => pkm.CheckZAAvailability(),
         _ => throw new ArgumentException($"{nameof(version)} is not a valid version for this operation.")
     };
 
@@ -112,4 +121,5 @@ public static class VersionHandler
     private static bool CheckBDSPAvailability(this PKM pk) => PersonalTable.BDSP.IsPresentInGame(pk.Species, pk.Form);
     private static bool CheckSWSHAvailability(this PKM pk) => PersonalTable.SWSH.IsPresentInGame(pk.Species, pk.Form);
     private static bool CheckLGPEAvailability(this PKM pk) => PersonalTable.GG.IsPresentInGame(pk.Species, pk.Form);
+    private static bool CheckZAAvailability(this PKM pk) => PersonalTable.ZA.IsPresentInGame(pk.Species, pk.Form);
 }

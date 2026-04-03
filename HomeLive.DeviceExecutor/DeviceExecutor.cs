@@ -116,8 +116,12 @@ public class DeviceExecutor<T>(DeviceState cfg) : SwitchRoutineExecutor<T>(cfg) 
         if (Config.Connection.Protocol is SwitchProtocol.WiFi && !Connection.Connected)
             throw new InvalidOperationException("No remote connection");
 
+        var start = await SwitchConnection.GetHeapBaseAsync(token).ConfigureAwait(false);
+
         if (BoxStartAddress == 0)
-            BoxStartAddress = await SwitchConnection.PointerAll(HomeDataOffsets.BoxStartPointer, token).ConfigureAwait(false);
+            BoxStartAddress = start + HomeDataOffsets.BoxStartOffset;
+
+        //BoxStartAddress = await SwitchConnection.PointerAll(HomeDataOffsets.BoxStartPointer, token).ConfigureAwait(false);
 
         return BoxStartAddress;
     }

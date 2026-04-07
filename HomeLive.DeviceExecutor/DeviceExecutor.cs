@@ -121,8 +121,6 @@ public class DeviceExecutor<T>(DeviceState cfg) : SwitchRoutineExecutor<T>(cfg) 
         if (BoxStartAddress == 0)
             BoxStartAddress = start + HomeDataOffsets.BoxStartOffset;
 
-        //BoxStartAddress = await SwitchConnection.PointerAll(HomeDataOffsets.BoxStartPointer, token).ConfigureAwait(false);
-
         return BoxStartAddress;
     }
 
